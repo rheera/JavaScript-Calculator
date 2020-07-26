@@ -1,58 +1,59 @@
 import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import { createStore } from 'redux';
+import { Provider, connect } from 'react-redux';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
+
+const defaultState = {
+    total: 0,
+    equation: "",
+    currentInput: ""
+};
+
+const ADD = () => {
+    return {
+        total: 0
+    }
 }
 
-export default App;
+const BUTTONS = ["AC", "/", "X", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "0", ".", "="]
+
+class Calculator extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+    handleClick({currentTarget}) {
+        this.setState({
+            currentInput: ""
+
+        });
+        document.getElementById(currentTarget.id[0]).play();
+    }
+
+    render() {
+        return (
+            <div className={"container-fluid"}>
+                <div className={"d-flex justify-content-md-center align-items-center vh-100"}>
+                    <div id={"display-div"}>
+                    </div>
+
+                    <div id={"buttons-div"} className={"d-flex"}>
+                        {BUTTONS.map((button, i) => (
+                            <button id={button} key={button + i} className={"buttons flex-row flex-wrap"}>{button}</button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
+class AppWrapper extends React.Component {
+    render() {
+        return (
+            <Calculator />
+        );
+    }
+};
+
+export default AppWrapper;
