@@ -15,7 +15,7 @@ const ADD = () => {
     }
 }
 
-const BUTTONS = ["AC", "/", "X", "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "0", ".", "="]
+const BUTTONS = ["AC", "/", "7", "8", "9", "X", "4", "5", "6", "-", "1", "2", "3", "+", "0", ".", "="]
 
 class Calculator extends React.Component {
     constructor(props) {
@@ -37,9 +37,11 @@ class Calculator extends React.Component {
                     <div id={"display-div"}>
                     </div>
 
-                    <div id={"buttons-div"} className={"d-flex"}>
+                    <div id={"buttons-div"} className={"d-flex flex-row flex-wrap"}>
                         {BUTTONS.map((button, i) => (
-                            <button id={button} key={button + i} className={"buttons flex-row flex-wrap"}>{button}</button>
+                            <div id={"div-" + button} key={button + i + "-div"} className={"button-div"}>
+                                <button id={"button-" + button} key={button + i} className={"buttons btn btn-dark btn-block"}>{button}</button>
+                            </div>
                         ))}
                     </div>
                 </div>

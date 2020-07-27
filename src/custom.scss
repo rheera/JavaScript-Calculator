@@ -1,8 +1,17 @@
-.buttons {
+.button-div {
   width: 25%;
-  height: 3em;
-  flex: 1 0 21%;
 }
 
+.buttons {
+  background-color: darkgrey;
+}
+
+#div-AC {
+  width: 75%;
+}
+
+#div-0 {
+  width: 50%;
+}
 
 @import '~bootstrap/scss/bootstrap.scss';
