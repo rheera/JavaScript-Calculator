@@ -10,7 +10,7 @@ const defaultState = {
 };
 
 
-const BUTTONS = ["AC", "/", "7", "8", "9", "X", "4", "5", "6", "-", "1", "2", "3", "+", "0", ".", "="]
+const BUTTONS = ["AC", "/", 7, 8, 9, "X", 4, 5, 6, "-", 1, 2, 3, "+", 0, ".", "="]
 // FCC requires the ids named different so this array just contains those names
 const BUTTONS_FCC = ["clear", "divide", "seven", "eight", "nine", "multiply", "four", "five", "six", "subtract", "one", "two", "three", "add", "zero", "decimal", "equals"]
 
@@ -24,10 +24,28 @@ class Calculator extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
     handleClick({currentTarget}) {
-        this.setState({
-            input: currentTarget.id
-
-        });
+        if (currentTarget.value >= 0 && currentTarget.value <= 9) {
+            if (/\d/.test(this.state.input)) {
+                this.setState({
+                    input: this.state.input.concat(currentTarget.value)
+                });
+            }
+            else {
+                this.setState({
+                    input: currentTarget.value
+                })
+            }
+        }
+        else if (currentTarget.value === "AC") {
+            this.setState({
+                input: "0"
+            });
+        }
+        else if (currentTarget.value === "+" || currentTarget.value === "-" || currentTarget.value === "/" || currentTarget.value === "X") {
+            this.setState({
+                input: currentTarget.value
+            })
+        }
     }
 
     render() {
@@ -49,7 +67,7 @@ class Calculator extends React.Component {
                             {BUTTONS.map((button, i) => (
                                 <div id={"div-" + button} key={button + i + "-div"} className={"button-div"}>
                                     <button id={BUTTONS_FCC[i]} key={button + i} className={"buttons btn btn-dark btn-block"}
-                                            onClick={this.handleClick}>{button}</button>
+                                            value = {button} onClick={this.handleClick}>{button}</button>
                                 </div>
                             ))}
                         </div>
