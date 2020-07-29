@@ -25,11 +25,13 @@ class Calculator extends React.Component {
     }
     handleClick({currentTarget}) {
         if (currentTarget.value >= 0 && currentTarget.value <= 9) {
-            if (/\d/.test(this.state.input)) {
+            // if there's already numbers written except for 0 then concatenate the new one on
+            if (/[1-9||\.]/.test(this.state.input)) {
                 this.setState({
                     input: this.state.input.concat(currentTarget.value)
                 });
             }
+            // if there are no numbers or 0 start the input from scratch with the button clicked
             else {
                 this.setState({
                     input: currentTarget.value
@@ -45,6 +47,27 @@ class Calculator extends React.Component {
             this.setState({
                 input: currentTarget.value
             })
+        }
+        else if (currentTarget.value === "."){
+
+            // if input already contains a decimal, do nothing aka, don't add another one
+            if (/\.+/.test(this.state.input)) {
+
+            }
+
+            // if the input is numbers add a decimal to it
+            else if (/[\d]/.test(this.state.input)) {
+                this.setState({
+                    input: this.state.input.concat(currentTarget.value)
+                });
+            }
+
+            // if the input is an operation symbol or blank make the input 0.
+            else {
+                this.setState({
+                    input: "0."
+                })
+            }
         }
     }
 
@@ -65,7 +88,7 @@ class Calculator extends React.Component {
 
                         <div id={"buttons-div"} className={"d-flex flex-row flex-wrap"}>
                             {BUTTONS.map((button, i) => (
-                                <div id={"div-" + button} key={button + i + "-div"} className={"button-div"}>
+                                <div id={"div-" + button} key={button + "-div"} className={"button-div"}>
                                     <button id={BUTTONS_FCC[i]} key={button + i} className={"buttons btn btn-dark btn-block"}
                                             value = {button} onClick={this.handleClick}>{button}</button>
                                 </div>
