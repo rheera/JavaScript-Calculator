@@ -4,8 +4,6 @@ import { Provider, connect } from 'react-redux';
 
 
 const defaultState = {
-    total: 0,
-    equation: "",
     input: ""
 };
 
@@ -101,10 +99,23 @@ class Calculator extends React.Component {
     }
 }
 
+class Display extends React.Component {
+    render() {
+        return (
+            <div>
+                <h1>Display</h1>
+            </div>
+        );
+    }
+}
+
 class AppWrapper extends React.Component {
     render() {
         return (
-            <Calculator />
+            <div>
+                <Display />
+                <Calculator />
+            </div>
         );
     }
 };
