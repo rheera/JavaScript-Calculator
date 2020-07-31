@@ -15,85 +15,78 @@ const BUTTONS_FCC = ["clear", "divide", "seven", "eight", "nine", "multiply", "f
 class Calculator extends React.Component {
     constructor(props) {
         super(props);
-        // initial input is still going to be handled locally
-        this.state = {
-            input: ""
-        }
         this.handleClick = this.handleClick.bind(this);
     }
-    handleClick({currentTarget}) {
-        if (currentTarget.value >= 0 && currentTarget.value <= 9) {
+
+    handleClick(e) {
+        // if input is a number
+        if (e.target.value >= 0 && e.target.value <= 9) {
             // if there's already numbers written except for 0 then concatenate the new one on
-            if (/[1-9||\.]/.test(this.state.input)) {
-                this.setState({
-                    input: this.state.input.concat(currentTarget.value)
-                });
+            if (/[1-9||\.]/.test(this.props.input)) {
+                this.props.onClick(this.props.input.concat(e.target.value));
             }
             // if there are no numbers or 0 start the input from scratch with the button clicked
             else {
-                this.setState({
-                    input: currentTarget.value
-                })
+                this.props.onClick(e.target.value);
             }
         }
-        else if (currentTarget.value === "AC") {
-            this.setState({
-                input: "0"
-            });
+        // if input is clear set input display to 0
+        else if (e.target.value === "AC") {
+            this.props.onClick("0");
         }
-        else if (currentTarget.value === "+" || currentTarget.value === "-" || currentTarget.value === "/" || currentTarget.value === "X") {
-            this.setState({
-                input: currentTarget.value
-            })
+        // if input is an operation clear the input display and show the operation
+        else if (e.target.value === "+" || e.target.value === "-" || e.target.value === "/" || e.target.value === "X") {
+            this.props.onClick(e.target.value);
         }
-        else if (currentTarget.value === "."){
+        // if input is a decimal
+        else if (e.target.value === "."){
 
             // if input already contains a decimal, do nothing aka, don't add another one
-            if (/\.+/.test(this.state.input)) {
-
+            if (/\.+/.test(this.props.input)) {
             }
 
             // if the input is numbers add a decimal to it
-            else if (/[\d]/.test(this.state.input)) {
-                this.setState({
-                    input: this.state.input.concat(currentTarget.value)
-                });
+            else if (/[\d]/.test(this.props.input)) {
+                this.props.onClick(this.props.input.concat(e.target.value));
             }
 
-            // if the input is an operation symbol or blank make the input 0.
+            // if the input is an operation symbol or AC (0) make the input 0.
             else {
-                this.setState({
-                    input: "0."
-                })
+                this.props.onClick("0.")
             }
         }
     }
 
     render() {
         return (
-            <div className={"container-fluid"}>
-                <div className={"d-flex justify-content-md-center align-items-center vh-100"}>
-                    <div>
-                        <div id={"display-div"}>
-                            <div id={"equation-div"}>
-
-                            </div>
-
-                            <div id={"current-input-div"}>
-                                {this.state.input}
-                            </div>
-                        </div>
-
-                        <div id={"buttons-div"} className={"d-flex flex-row flex-wrap"}>
-                            {BUTTONS.map((button, i) => (
-                                <div id={"div-" + button} key={button + "-div"} className={"button-div"}>
-                                    <button id={BUTTONS_FCC[i]} key={button + i} className={"buttons btn btn-dark btn-block"}
-                                            value = {button} onClick={this.handleClick}>{button}</button>
-                                </div>
-                            ))}
-                        </div>
+            <div id={"buttons-div"} className={"d-flex flex-row flex-wrap"}>
+                {BUTTONS.map((button, i) => (
+                    <div id={"div-" + button} key={button + "-div"} className={"button-div"}>
+                        <button id={BUTTONS_FCC[i]} key={button + i} className={"buttons btn btn-dark btn-block"}
+                                value = {button} onClick={this.handleClick}>{button}</button>
                     </div>
-                </div>
+                ))}
+            </div>
+        );
+    }
+}
+
+class InputDisplay extends React.Component {
+    render() {
+        const input = this.props.input;
+        return (
+            <div id={"current-input-div"}>
+                {input}
+            </div>
+        );
+    }
+}
+
+class EquationDisplay extends React.Component {
+    render() {
+        return (
+            <div id={"equation-div"}>
+                Equation
             </div>
         );
     }
@@ -101,20 +94,45 @@ class Calculator extends React.Component {
 
 class Display extends React.Component {
     render() {
+        const input = this.props.input;
         return (
-            <div>
-                <h1>Display</h1>
+            <div id={"display-div"}>
+                <EquationDisplay input = {input} />
+                <InputDisplay input = {input} />
             </div>
         );
     }
 }
 
 class AppWrapper extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            input: ""
+        };
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(input) {
+        this.setState({
+            input: input
+        });
+    }
+
     render() {
         return (
-            <div>
-                <Display />
-                <Calculator />
+            <div className={"container-fluid"}>
+                <div className={"d-flex justify-content-md-center align-items-center vh-100"}>
+                    <div>
+                        <Display
+                            input={this.state.input}
+                        />
+                        <Calculator
+                            input={this.state.input}
+                            onClick={this.handleClick}
+                        />
+                    </div>
+                </div>
             </div>
         );
     }
