@@ -3,10 +3,6 @@ import { createStore } from 'redux';
 import { Provider, connect } from 'react-redux';
 
 
-const defaultState = {
-    input: ""
-};
-
 
 const BUTTONS = ["AC", "/", 7, 8, 9, "X", 4, 5, 6, "-", 1, 2, 3, "+", 0, ".", "="]
 // FCC requires the ids named different so this array just contains those names
@@ -83,10 +79,20 @@ class InputDisplay extends React.Component {
 }
 
 class EquationDisplay extends React.Component {
+    constructor(props) {
+        super(props);
+        this.equation = this.equation.bind(this);
+    }
+
+    equation() {
+        this.props.setEquation(this.props.equation.concat(this.props.input));
+    }
     render() {
+        let equation = this.props.equation;
         return (
             <div id={"equation-div"}>
-                Equation
+                {equation}
+                {console.log(this.equation())}
             </div>
         );
     }
@@ -95,9 +101,14 @@ class EquationDisplay extends React.Component {
 class Display extends React.Component {
     render() {
         const input = this.props.input;
+        const equation = this.props.equation;
         return (
             <div id={"display-div"}>
-                <EquationDisplay input = {input} />
+                <EquationDisplay
+                    input = {input}
+                    equation = {equation}
+                    setEquation = {this.props.setEquation}
+                />
                 <InputDisplay input = {input} />
             </div>
         );
@@ -108,14 +119,22 @@ class AppWrapper extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            input: ""
+            input: "",
+            equation: ""
         };
         this.handleClick = this.handleClick.bind(this);
+        this.setEquation = this.setEquation.bind(this);
     }
 
     handleClick(input) {
         this.setState({
             input: input
+        });
+    }
+
+    setEquation(input) {
+        this.setState({
+            equation: input
         });
     }
 
@@ -126,6 +145,8 @@ class AppWrapper extends React.Component {
                     <div>
                         <Display
                             input={this.state.input}
+                            equation = {this.state.equation}
+                            setEquation = {this.setEquation}
                         />
                         <Calculator
                             input={this.state.input}
