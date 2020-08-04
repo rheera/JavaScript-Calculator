@@ -1,15 +1,10 @@
 import React from 'react';
-import Parser from 'expr-eval';
-import { createStore } from 'redux';
-import { Provider, connect } from 'react-redux';
-
-
 
 
 const BUTTONS = ["AC", "/", 7, 8, 9, "*", 4, 5, 6, "-", 1, 2, 3, "+", 0, ".", "="]
 // FCC requires the ids named different so this array just contains those names
 const BUTTONS_FCC = ["clear", "divide", "seven", "eight", "nine", "multiply", "four", "five", "six", "subtract", "one", "two", "three", "add", "zero", "decimal", "equals"];
-const OPERATIONS = ["+", "*", "/"];
+const OPERATIONS = ["+","-", "*", "/"];
 
 class Calculator extends React.Component {
     constructor(props) {
@@ -33,33 +28,27 @@ class Calculator extends React.Component {
         }
         // if input is clear set input display to 0
         else if (e.target.value === "AC") {
+            // set input to 0
             this.props.onClick("0");
-            this.props.onEquation("0");
+            // set the equation to blank, if you set it to 0 there will always be a 0 in front, this is easier
+            this.props.onEquation("");
         }
-        // if input is an operation clear the input display and show the operation
+        // if input is +,/,* clear the input display and show the operation
         else if (e.target.value === "+" || e.target.value === "/" || e.target.value === "*") {
             let lastInput = this.props.equation.charAt(this.props.equation.length-1);
-            if (OPERATIONS.includes(lastInput)){
-                this.props.onClick(e.target.value);
-                this.props.onEquation(this.props.equation.substring(0, this.props.equation.length-1).concat(e.target.value));
+            // keep removing the last element if it is an operation
+            let equationStr = this.props.equation;
+            while (OPERATIONS.includes(lastInput)){
+                equationStr = equationStr.substring(0, equationStr.length - 1);
+                lastInput = equationStr.charAt(equationStr.length-1);
             }
-            else if (lastInput === '-') {
-                console.log("here");
-                do {
-                    console.log("here2");
-                    this.props.onEquation(this.props.equation.substring(0, this.props.equation.length-1));
-                }
-                while (OPERATIONS.includes(this.props.equation.charAt(this.props.equation.length-1)));
-
-                this.props.onClick(e.target.value);
-                this.props.onEquation(this.props.equation.concat(e.target.value));
-            }
-            else {
-                this.props.onClick(e.target.value);
-                this.props.onEquation(this.props.equation.concat(e.target.value));
-            }
+            // after removing operations add the new operation to the end of the equation string
+            // and set the input to the new operation
+            this.props.onClick(e.target.value);
+            this.props.onEquation(equationStr.concat(e.target.value));
         }
 
+        // - can keep being added since it can be a negative number
         else if (e.target.value === "-") {
             this.props.onClick(e.target.value);
             this.props.onEquation(this.props.equation.concat(e.target.value));
@@ -67,7 +56,7 @@ class Calculator extends React.Component {
         // if input is a decimal
         else if (e.target.value === "."){
 
-            // if input already contains a decimal, do nothing aka, don't add another one
+            // if input already contains a decimal, do nothing aka, don't add another one since you can't have multiple decimals
             if (/\.+/.test(this.props.input)) {
             }
 
@@ -83,9 +72,13 @@ class Calculator extends React.Component {
                 this.props.onEquation(this.props.equation.concat("0."));
             }
         }
+        // equate the equation string and set the input and the equation string to the total
+        // TODO if you have an operator at the end and try to hit equal you get an error eg. 2+=
+        //  probably should make a function to remove extra operations and use that function here and in the +,*,/ if block
         else if (e.target.value === "="){
             let Parser = require('expr-eval').Parser;
             this.props.onClick(Parser.evaluate(this.props.equation));
+            // makes it to string so we can continue doing calculations with the number since our state is all of type string
             this.props.onEquation(Parser.evaluate(this.props.equation).toString());
         }
     }
