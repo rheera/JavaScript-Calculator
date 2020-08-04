@@ -8,7 +8,8 @@ import { Provider, connect } from 'react-redux';
 
 const BUTTONS = ["AC", "/", 7, 8, 9, "*", 4, 5, 6, "-", 1, 2, 3, "+", 0, ".", "="]
 // FCC requires the ids named different so this array just contains those names
-const BUTTONS_FCC = ["clear", "divide", "seven", "eight", "nine", "multiply", "four", "five", "six", "subtract", "one", "two", "three", "add", "zero", "decimal", "equals"]
+const BUTTONS_FCC = ["clear", "divide", "seven", "eight", "nine", "multiply", "four", "five", "six", "subtract", "one", "two", "three", "add", "zero", "decimal", "equals"];
+const OPERATIONS = ["+", "*", "/"];
 
 class Calculator extends React.Component {
     constructor(props) {
@@ -36,7 +37,30 @@ class Calculator extends React.Component {
             this.props.onEquation("0");
         }
         // if input is an operation clear the input display and show the operation
-        else if (e.target.value === "+" || e.target.value === "-" || e.target.value === "/" || e.target.value === "*") {
+        else if (e.target.value === "+" || e.target.value === "/" || e.target.value === "*") {
+            let lastInput = this.props.equation.charAt(this.props.equation.length-1);
+            if (OPERATIONS.includes(lastInput)){
+                this.props.onClick(e.target.value);
+                this.props.onEquation(this.props.equation.substring(0, this.props.equation.length-1).concat(e.target.value));
+            }
+            else if (lastInput === '-') {
+                console.log("here");
+                do {
+                    console.log("here2");
+                    this.props.onEquation(this.props.equation.substring(0, this.props.equation.length-1));
+                }
+                while (OPERATIONS.includes(this.props.equation.charAt(this.props.equation.length-1)));
+
+                this.props.onClick(e.target.value);
+                this.props.onEquation(this.props.equation.concat(e.target.value));
+            }
+            else {
+                this.props.onClick(e.target.value);
+                this.props.onEquation(this.props.equation.concat(e.target.value));
+            }
+        }
+
+        else if (e.target.value === "-") {
             this.props.onClick(e.target.value);
             this.props.onEquation(this.props.equation.concat(e.target.value));
         }
@@ -61,7 +85,8 @@ class Calculator extends React.Component {
         }
         else if (e.target.value === "="){
             let Parser = require('expr-eval').Parser;
-            this.props.onClick(Parser.evaluate(this.props.equation))
+            this.props.onClick(Parser.evaluate(this.props.equation));
+            this.props.onEquation(Parser.evaluate(this.props.equation).toString());
         }
     }
 
@@ -83,7 +108,7 @@ class InputDisplay extends React.Component {
     render() {
         const input = this.props.input;
         return (
-            <div id={"current-input-div"}>
+            <div id={"display"}>
                 {input}
             </div>
         );
